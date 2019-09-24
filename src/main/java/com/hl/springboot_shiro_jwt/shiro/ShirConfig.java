@@ -22,15 +22,16 @@ import java.util.Map;
 public class ShirConfig {
 
     @Bean
-    public JwtAuthorizingRealm myShiroRealm(){
-        JwtAuthorizingRealm myShiroRealm = new JwtAuthorizingRealm();
-        return myShiroRealm;
+    public JwtAuthorizingRealm authorizingRealm(){
+        JwtAuthorizingRealm authorizingRealm=new JwtAuthorizingRealm();
+        authorizingRealm.setCredentialsMatcher(new AllowAllCredentialsMatcher());
+        return authorizingRealm;
     }
 
     @Bean("securityManager")
     public DefaultWebSecurityManager securityManager() {
-        DefaultWebSecurityManager securityManager =  new DefaultWebSecurityManager();
-        securityManager.setRealm(myShiroRealm());
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealm(authorizingRealm());
 
         // 关闭自带session
         DefaultSubjectDAO subjectDAO = (DefaultSubjectDAO) securityManager.getSubjectDAO();
@@ -46,8 +47,6 @@ public class ShirConfig {
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
-        factoryBean.setLoginUrl("/login");
-
         Map<String, Filter> filterMap = new HashMap<>();
         filterMap.put("jwt", new JwtFilter());
         factoryBean.setFilters(filterMap);

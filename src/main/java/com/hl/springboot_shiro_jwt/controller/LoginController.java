@@ -4,7 +4,6 @@ import com.hl.springboot_shiro_jwt.domain.User;
 import com.hl.springboot_shiro_jwt.repository.UserRepository;
 import com.hl.springboot_shiro_jwt.shiro.JwtConfig;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +28,7 @@ public class LoginController {
             return "用户名或密码错误";
         }
 
-        String token = jwtConfig.createToken(user);
+        String token = jwtConfig.createToken(user, null);
 
         return token;
     }

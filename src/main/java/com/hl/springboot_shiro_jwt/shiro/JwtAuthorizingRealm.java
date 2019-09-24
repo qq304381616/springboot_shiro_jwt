@@ -9,7 +9,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -30,7 +29,7 @@ public class JwtAuthorizingRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof UsernamePasswordToken;
+        return token instanceof JwtToken;
     }
 
     @Override
@@ -53,12 +52,10 @@ public class JwtAuthorizingRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("JwtAuthorizingRealm.doGetAuthenticationInfo()");
-        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
-        String username = token.getUsername();
-        if (!jwtConfig.verifyToken(username)) {
+        String jwtToken = (String) authenticationToken.getCredentials();
+        if (!jwtConfig.verifyToken(jwtToken)) {
             throw new AuthenticationException("check jwtToken");
         }
-
-        return new SimpleAuthenticationInfo(username, username, getName());
+        return new SimpleAuthenticationInfo(jwtConfig.getUsernameByToken(jwtToken), authenticationToken, getName());
     }
 }

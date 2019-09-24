@@ -1,14 +1,13 @@
 package com.hl.springboot_shiro_jwt.shiro;
 
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * 所有的请求都会先经过Filter，所以我们继承官方的BasicHttpAuthenticationFilter，并且重写鉴权的方法。 执行流程
- * preHandle->isAccessAllowed->isLoginAttempt->executeLogin
+ * 所有的请求都会先经过Filter
+ * 执行流程 preHandle->isAccessAllowed->isLoginAttempt->executeLogin
  */
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
@@ -20,7 +19,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         String header = getAuthzHeader(request);
         if (header != null && !"".equals(header)) {
             try {
-                UsernamePasswordToken token = new UsernamePasswordToken(getAuthzHeader(request), getAuthzHeader(request));
+                JwtToken token = new JwtToken(header);
                 getSubject(request, response).login(token);
                 return true;
             } catch (Exception e) {
